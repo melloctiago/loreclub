@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: theme('colors.lore-bg');
+  background-image: radial-gradient(circle at 1px 1px, rgba(214, 123, 255, 0.1) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Customizando a scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: theme('colors.lore-bg-light');
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: theme('colors.lore-purple-md');
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.lore-purple');
+}
