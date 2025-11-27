@@ -29,7 +29,6 @@ const UserMenu = ({ username, onProfileClick, onAchievementsClick }) => {
 
     return (
         <div className="relative" ref={menuRef}>
-            {/* Trigger Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
@@ -38,10 +37,8 @@ const UserMenu = ({ username, onProfileClick, onAchievementsClick }) => {
                 <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {/* Dropdown Menu */}
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-lore-bg-light border border-lore-border rounded-lg shadow-xl z-50 overflow-hidden">
-                    {/* Perfil */}
                     <button
                         onClick={handleProfileClick}
                         className="w-full px-4 py-3 flex items-center gap-2 text-gray-300 hover:bg-lore-purple-lg/20 hover:text-white transition-colors border-b border-lore-border"
@@ -50,7 +47,6 @@ const UserMenu = ({ username, onProfileClick, onAchievementsClick }) => {
                         <span>Perfil</span>
                     </button>
 
-                    {/* Conquistas */}
                     <button
                         onClick={handleAchievementsClick}
                         className="w-full px-4 py-3 flex items-center gap-2 text-gray-300 hover:bg-lore-purple-lg/20 hover:text-white transition-colors"

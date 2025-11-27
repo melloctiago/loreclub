@@ -1,6 +1,5 @@
 const API_BASE_URL = 'http://localhost:8000/api/v1';
 
-// FUNÇÃO AUXILIAR 
 const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem('loreclub_token');
     
@@ -46,12 +45,7 @@ const fetchWithAuth = async (url, options = {}) => {
     return response.json();
 };
 
-// FUNÇÕES DE AUTENTICAÇÃO
-
-
-/**
- * Login - Retorna token e dados do usuário
- */
+ 
 export const apiLogin = async (username, password) => {
     try {
         const formData = new URLSearchParams();
@@ -80,9 +74,6 @@ export const apiLogin = async (username, password) => {
     }
 };
 
-/**
- * Registrar um novo Herói (usuário)
- */
 export const apiRegister = async (username, email, password) => {
     try {
         const registerResponse = await fetch(`${API_BASE_URL}/heroes/`, {
@@ -104,9 +95,6 @@ export const apiRegister = async (username, email, password) => {
     }
 };
 
-/**
- * Buscar dados do Herói logado (usado para validar o token)
- */
 export const apiGetCurrentHero = async (tokenOverride = null) => {
     try {
         let options = {};
@@ -121,10 +109,6 @@ export const apiGetCurrentHero = async (tokenOverride = null) => {
     }
 };
 
-// FUNÇÕES DE QUESTS (Mantidas)
-
-
-// Busca os boards organizados com as quests do usuário logado
 export const apiGetBoards = async () => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/quests/my-boards-with-quests`);
@@ -135,7 +119,6 @@ export const apiGetBoards = async () => {
     }
 };
 
-// Cria uma nova quest
 export const apiCreateQuest = async (questData) => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/quests/`, {
@@ -149,7 +132,6 @@ export const apiCreateQuest = async (questData) => {
     }
 };
 
-// Atualiza uma quest 
 export const apiUpdateQuest = async (questId, updateData) => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/quests/${questId}`, {
@@ -163,7 +145,6 @@ export const apiUpdateQuest = async (questId, updateData) => {
     }
 };
 
-// Busca todas as quests do usuário
 export const apiGetMyQuests = async () => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/quests/my-quests`);
@@ -174,7 +155,6 @@ export const apiGetMyQuests = async () => {
     }
 };
 
-// Atribui um herói a uma quest
 export const apiAssignHeroToQuest = async (questId, heroId) => {
     try {
         const data = await fetchWithAuth(
@@ -188,9 +168,6 @@ export const apiAssignHeroToQuest = async (questId, heroId) => {
     }
 };
 
-// FUNÇÕES DE GUILD BOARDS
-
-// Cria uma nova guilda (guild board)
 export const apiCreateGuildBoard = async (guildName) => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/guild-boards/`, {
@@ -204,7 +181,6 @@ export const apiCreateGuildBoard = async (guildName) => {
     }
 };
 
-// Busca todas as guilds
 export const apiGetGuildBoards = async () => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/guild-boards/`);
@@ -215,7 +191,6 @@ export const apiGetGuildBoards = async () => {
     }
 };
 
-// Busca os boards de uma guilda específica
 export const apiGetBoardsByGuild = async (guildId) => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/quests/boards-by-guild/${guildId}`);
@@ -226,7 +201,6 @@ export const apiGetBoardsByGuild = async (guildId) => {
     }
 };
 
-// Adiciona/atualiza o relatório da quest
 export const apiAddQuestReport = async (questId, reportData) => {
     try {
         const data = await fetchWithAuth(`${API_BASE_URL}/quests/${questId}/report`, {
@@ -239,8 +213,6 @@ export const apiAddQuestReport = async (questId, reportData) => {
         throw error;
     }
 };
-
-// FUNÇÕES DE CONQUISTAS (ACHIEVEMENTS)
 
 export const apiGetAchievements = async () => {
     try {
@@ -286,9 +258,16 @@ export const apiRemoveUnlock = async (achievementId) => {
 
 export const apiCreateAchievement = async (achievementData) => {
     try {
+        const payload = {
+            title: achievementData.title,
+            flavor_text: achievementData.flavorText || '',
+            icon: achievementData.icon || '🏆',
+            objective_type: achievementData.objectiveType,
+            objective_value: achievementData.objectiveValue
+        };
         const data = await fetchWithAuth(`${API_BASE_URL}/achievements/`, {
             method: 'POST',
-            body: JSON.stringify(achievementData),
+            body: JSON.stringify(payload),
         });
         return data;
     } catch (error) {

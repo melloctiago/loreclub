@@ -1,12 +1,13 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Board from './components/Board';
 import AuthLayout from './components/AuthLayout';
+import AdminAchievements from './pages/AdminAchievements';
 
 function App() {
   const { user, loading } = useAuth();
 
-  // Mostra um loading global enquanto o AuthContext verifica o token
   if (loading) {
     return (
       <div className="min-h-screen bg-lore-bg text-gray-100 flex items-center justify-center">
@@ -19,8 +20,15 @@ function App() {
 
   return (
     <div className="min-h-screen bg-lore-bg text-gray-100 font-sans">
-      {/* Se o usuário estiver logado, mostra o Kanban (Board). Senão, mostra a página de Autenticação */}
-      {user ? <Board /> : <AuthLayout />}
+      <Router>
+        <Routes>
+          <Route path="/" element={user ? <Board /> : <AuthLayout />} />
+          <Route
+            path="/admin/conquistas"
+            element={user ? <AdminAchievements /> : <Navigate to="/" replace />}
+          />
+        </Routes>
+      </Router>
     </div>
   );
 }

@@ -395,7 +395,6 @@ const Board = () => {
 
         return (
             <div className="min-h-screen flex flex-col">
-            {/* Header */}
             <header className="bg-lore-bg-light bg-opacity-80 backdrop-blur-sm shadow-lg p-4 flex justify-between items-center border-b border-lore-border sticky top-0 z-50">
                 <div className="flex items-center gap-4">
                     <h1 className="font-title text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-lore-purple-lg to-lore-pink-lg">
@@ -427,7 +426,6 @@ const Board = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-6">
-                    {/* Gamification Stats */}
                     <div className="flex items-center gap-4 text-sm">
                         <div className="flex flex-col items-end">
                             <span className="font-bold text-lore-purple-md">Nível {user.level}</span>
@@ -452,7 +450,6 @@ const Board = () => {
                     <UserMenu
                         username={user.username}
                         onProfileClick={() => {
-                            // TODO: Implementar tela de perfil
                             console.log('Perfil clicado');
                         }}
                         onAchievementsClick={() => setShowAchievementsModal(true)}
@@ -463,11 +460,9 @@ const Board = () => {
                 </div>
             </header>
 
-            {/* Conteúdo do Kanban */}
             <main className="flex-grow p-4 md:p-8">
                 <DragDropContext onDragEnd={onDragEnd}>
                     <div className="flex flex-col md:flex-row gap-6">
-                        {/* Garante que columns não é null antes de mapear */}
                         {Object.entries(columns)
                             .filter(([key]) => key !== 'guild') // Filtra a chave 'guild'
                             .map(([key, column]) => (
@@ -481,21 +476,18 @@ const Board = () => {
                     </div>
                 </DragDropContext>
             </main>
-
-            {/* Modal para criar guilda */}
+            
             <CreateGuildModal 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onCreateGuild={handleCreateGuild}
                 isLoading={isCreatingGuild}
             />
-            {/* Modal para submeter relatório ao concluir */}
             <ReportModal
                 isOpen={showReportModal}
                 onClose={() => { setShowReportModal(false); setPendingCompletion(null); }}
                 onSubmit={handleSubmitReport}
             />
-            {/* Modal de Conquistas */}
             <AchievementsModal
                 isOpen={showAchievementsModal}
                 onClose={() => setShowAchievementsModal(false)}

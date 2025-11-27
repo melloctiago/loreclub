@@ -27,7 +27,6 @@ const QuestCard = ({ quest, index }) => {
                     <h3 className="font-semibold text-white">{quest.title}</h3>
                     <p className="text-sm text-gray-300 mt-2">{quest.description}</p>
 
-                    {/* Mostrar ícone de 'Ler Resumo' se houver relatório */}
                     {quest.report && (
                         <div className="mt-3 flex items-center gap-2">
                             <button
@@ -37,7 +36,6 @@ const QuestCard = ({ quest, index }) => {
                                 aria-label="Ler resumo"
                                 className="text-lore-purple-lg hover:text-lore-purple-md"
                             >
-                                {/* Prefer a scroll icon, fall back to file icon visually */}
                                 <Scroll className="h-5 w-5" />
                             </button>
                         </div>

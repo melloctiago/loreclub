@@ -20,7 +20,6 @@ const AchievementsModal = ({ isOpen, onClose }) => {
                 const mapped = (data || []).map(d => ({
                     id: d.id,
                     title: d.title,
-                    description: d.description,
                     flavorText: d.flavor_text || d.flavorText || '',
                     icon: d.icon || '⚔️',
                     objective: {
@@ -44,21 +43,15 @@ const AchievementsModal = ({ isOpen, onClose }) => {
 
     if (!isOpen) return null;
 
-    // Tipos de objetivos disponíveis com suas configurações
     const objectiveTypes = [
-        { value: 'create_first_quest', label: '🎯 Criar primeira missão', hasParameter: false },
-        { value: 'complete_quests', label: '✅ Completar missões', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'missões' },
-        { value: 'complete_hard_quest', label: '💪 Completar missões Difícil', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'missões' },
-        { value: 'complete_epic_quest', label: '👑 Completar missões Épica', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'missões' },
-        { value: 'create_guilds', label: '🏰 Criar guildas', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'guildas' },
-        { value: 'earn_xp', label: '⭐ Ganhar XP', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'XP' },
-        { value: 'earn_coins', label: '💰 Ganhar moedas', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'moedas' },
-        { value: 'reach_level', label: '🎖️ Atingir nível', hasParameter: true, paramLabel: 'Nível', paramUnit: '' },
-        { value: 'complete_all_quests_guild', label: '🗡️ Completar todas as missões de uma guilda', hasParameter: false },
-        { value: 'daily_streak', label: '🔥 Completar missões em dias seguidos', hasParameter: true, paramLabel: 'Dias', paramUnit: 'dias' }
+        { value: 'complete_quests', label: 'Completar missões', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'missões' },
+        { value: 'complete_hard_quest', label: 'Completar missão Difícil', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'missões' },
+        { value: 'complete_epic_quest', label: 'Completar missão Épica', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'missões' },
+        { value: 'earn_coins', label: 'Ganhar moedas', hasParameter: true, paramLabel: 'Quantidade', paramUnit: 'moedas' },
+        { value: 'complete_all_quests_guild', label: 'Completar todas as missões de uma guilda', hasParameter: false },
+        { value: 'reach_level', label: 'Atingir nível', hasParameter: true, paramLabel: 'Nível', paramUnit: '' }
     ];
 
-    // Normalize list
     const normalized = displayAchievements.map(a => ({
         ...a,
         unlocked: a.unlocked !== undefined ? a.unlocked : false,
@@ -80,7 +73,6 @@ const AchievementsModal = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
             <div className="bg-lore-bg-light border border-lore-border rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-                {/* Header */}
                 <div className="sticky top-0 bg-lore-bg-light border-b border-lore-border p-6 flex justify-between items-center">
                     <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-lore-purple-lg to-lore-pink-lg">
                         🏆 Conquistas
@@ -94,7 +86,6 @@ const AchievementsModal = ({ isOpen, onClose }) => {
                     </button>
                 </div>
 
-                {/* Achievements Grid */}
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                     {loading ? (
                         <div className="col-span-1 md:col-span-2 text-center py-12 text-gray-300">
@@ -113,7 +104,6 @@ const AchievementsModal = ({ isOpen, onClose }) => {
                                             const mapped = (data || []).map(d => ({
                                                 id: d.id,
                                                 title: d.title,
-                                                description: d.description,
                                                 flavorText: d.flavor_text || d.flavorText || '',
                                                 icon: d.icon || '⚔️',
                                                 objective: {
@@ -163,24 +153,13 @@ const AchievementsModal = ({ isOpen, onClose }) => {
                                         >
                                             {achievement.title}
                                         </h3>
-                                        <p
-                                            className={`text-sm mt-1 ${
-                                                achievement.unlocked
-                                                    ? 'text-gray-300'
-                                                    : 'text-gray-600'
-                                            }`}
-                                        >
-                                            {achievement.description}
-                                        </p>
                                         
-                                        {/* Objetivo */}
                                         {achievement.objective && (
                                             <p className="text-xs mt-2 text-lore-pink-lg font-semibold">
-                                                📌 {getObjectiveDisplay(achievement.objective)}
+                                                 {getObjectiveDisplay(achievement.objective)}
                                             </p>
                                         )}
 
-                                        {/* Flavor Text */}
                                         {achievement.flavorText && (
                                             <p className={`text-xs mt-2 italic ${achievement.unlocked ? 'text-lore-purple-md' : 'text-gray-600'}`}>
                                                 "{achievement.flavorText}"
@@ -189,7 +168,17 @@ const AchievementsModal = ({ isOpen, onClose }) => {
 
                                         {achievement.unlocked && achievement.unlockedDate && (
                                             <p className="text-xs text-lore-purple-md mt-2">
-                                                ✓ Desbloqueado em {achievement.unlockedDate}
+                                                {(() => {
+                                                    try {
+                                                        const d = new Date(achievement.unlockedDate);
+                                                        const onlyDate = d.toLocaleDateString('pt-BR', {
+                                                            year: 'numeric', month: '2-digit', day: '2-digit'
+                                                        });
+                                                        return `✓ Desbloqueado em ${onlyDate}`;
+                                                    } catch {
+                                                        return `✓ Desbloqueado em ${achievement.unlockedDate}`;
+                                                    }
+                                                })()}
                                             </p>
                                         )}
                                     </div>
@@ -204,7 +193,6 @@ const AchievementsModal = ({ isOpen, onClose }) => {
                     )}
                 </div>
 
-                {/* Footer */}
                 <div className="sticky bottom-0 bg-lore-bg-light border-t border-lore-border p-4 flex justify-end gap-2">
                     <Button onClick={onClose} variant="secondary" className="!w-auto !py-2 !px-4">
                         Fechar

@@ -33,15 +33,13 @@ const KanbanColumn = ({ column, quests, onAddQuest }) => {
     return (
         <div className="w-full md:w-1/3 p-2">
             <div className="bg-lore-bg-light rounded-xl p-4 shadow-lg border border-lore-border h-full flex flex-col">
-                {/* Título da Coluna */}
                 <h2 className="text-xl font-bold text-white mb-4 px-2 flex justify-between items-center">
                     {column.title}
                     <span className="text-sm font-normal text-gray-400 bg-gray-700 rounded-full px-2.5 py-0.5">
                         {quests.length}
                     </span>
                 </h2>
-
-                {/* Área de Drop (Missões) */}
+                
                 <Droppable droppableId={column.id}>
                     {(provided, snapshot) => (
                         <div
@@ -50,7 +48,6 @@ const KanbanColumn = ({ column, quests, onAddQuest }) => {
                             className={`flex-grow min-h-[200px] p-2 rounded-lg transition-colors
                                 ${snapshot.isDraggingOver ? 'bg-gray-700/50' : 'bg-transparent'}`}
                         >
-                            {/* Mapeia a lista de objetos 'quest' recebida */}
                             {quests.map((quest, index) => (
                                 <QuestCard key={quest.id} quest={quest} index={index} />
                             ))}
@@ -59,7 +56,6 @@ const KanbanColumn = ({ column, quests, onAddQuest }) => {
                     )}
                 </Droppable>
 
-                {/* Formulário de Adicionar Missão */}
                 {showForm ? (
                     <div className="p-2 space-y-4">
                         <input
@@ -76,8 +72,6 @@ const KanbanColumn = ({ column, quests, onAddQuest }) => {
                             rows="3"
                             className="block w-full rounded-lg border-0 py-3 px-4 bg-gray-700 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lore-purple-md"
                         />
-
-                        {/* Seletor de Dificuldade */}
                         <div className="flex items-center justify-between">
                             <select
                                 value={difficulty}
