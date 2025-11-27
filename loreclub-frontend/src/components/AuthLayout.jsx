@@ -4,10 +4,9 @@ import Input from './Input';
 import Button from './Button';
 import { User, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 
-// --- Página de Login ---
 const LoginPage = ({ onTogglePage }) => {
-    const [username, setUsername] = useState('meuheroi'); 
-    const [password, setPassword] = useState('senhaforte123');
+    const [username, setUsername] = useState(''); 
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -45,7 +44,7 @@ const LoginPage = ({ onTogglePage }) => {
                     <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
-                        label="Senha Secreta"
+                        label="Senha"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         icon={Lock}
@@ -75,7 +74,6 @@ const LoginPage = ({ onTogglePage }) => {
     );
 };
 
-// --- Página de Registro ---
 const RegisterPage = ({ onTogglePage }) => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
@@ -148,7 +146,6 @@ const RegisterPage = ({ onTogglePage }) => {
     );
 };
 
-// --- Layout Principal de Autenticação ---
 const AuthLayout = () => {
     const [isLogin, setIsLogin] = useState(true);
 
