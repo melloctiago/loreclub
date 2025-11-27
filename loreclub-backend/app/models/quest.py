@@ -23,6 +23,11 @@ class Quest(Base):
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     
+    # Gamification Rewards
+    xp_reward = Column(Integer, default=10)
+    coin_reward = Column(Integer, default=5)
+    difficulty = Column(String(50), default="Easy") # Easy, Medium, Hard, Epic
+    
     # Usa o Enum para garantir que os status sejam controlados
     status = Column(Enum(QuestStatus), nullable=False, default=QuestStatus.QUEST_BOARD)
 

@@ -20,3 +20,4 @@ class GuildBoard(Base):
         back_populates="board",
         cascade="all, delete-orphan"
     )
+

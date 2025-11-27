@@ -14,6 +14,15 @@ class GuildBoardCreate(GuildBoardBase):
     """
     pass
 
+class GuildBoardSimple(GuildBoardBase):
+    """
+    Schema simples para leitura do Quadro (apenas id e name).
+    Usado para listas de guilds.
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+
 class GuildBoard(GuildBoardBase):
     """
     Schema para leitura do Quadro (retornado pela API).

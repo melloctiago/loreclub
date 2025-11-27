@@ -38,6 +38,23 @@ def get_my_boards_with_quests(
     # Busca todas as quests do herói logado
     my_quests = db.query(Quest).filter(Quest.heroes.contains(current_hero)).all()
     
+    # Se não houver quests, retorna apenas as colunas vazias
+    primary_guild = None
+    
+    if my_quests:
+        # A guilda primária é a primeira guilda com quests
+        primary_guild_id = my_quests[0].guild_board_id
+        primary_guild = db.query(GuildBoard).filter(GuildBoard.id == primary_guild_id).first()
+    else:
+        # Se não houver quests, busca a primeira guilda existente ou cria uma padrão
+        primary_guild = db.query(GuildBoard).first()
+        if not primary_guild:
+            # Cria uma guilda padrão
+            primary_guild = GuildBoard(name="Minha Primeira Guilda")
+            db.add(primary_guild)
+            db.commit()
+            db.refresh(primary_guild)
+    
     # Organiza as quests por status para o formato do Kanban
     kanban_data = {
         "quest-board": {
@@ -60,13 +77,95 @@ def get_my_boards_with_quests(
         }
     }
     
+    # Adiciona informação da guilda primária
+    if primary_guild:
+        kanban_data["guild"] = {
+            "id": primary_guild.id,
+            "name": primary_guild.name
+        }
+    
     # Distribui as quests nas colunas corretas
     for quest in my_quests:
         quest_data = {
             "id": str(quest.id),
             "title": quest.title,
             "description": quest.description,
+            "report": quest.log.report if quest.log else None,
             "status": quest.status.value,
+            "difficulty": quest.difficulty,
+            "xp_reward": quest.xp_reward,
+            "coin_reward": quest.coin_reward,
+            "guild_board_id": quest.guild_board_id
+        }
+        
+        if quest.status == QuestStatus.QUEST_BOARD:
+            kanban_data["quest-board"]["quests"].append(quest_data)
+        elif quest.status == QuestStatus.IN_PROGRESS:
+            kanban_data["in-progress"]["quests"].append(quest_data)
+        elif quest.status == QuestStatus.COMPLETED:
+            kanban_data["completed"]["quests"].append(quest_data)
+    
+    return kanban_data
+
+
+@router.get("/boards-by-guild/{guild_id}")
+def get_boards_by_guild(
+    *,
+    db: Session = Depends(deps.get_db),
+    guild_id: int,
+    current_hero: Hero = Depends(deps.get_current_active_hero)
+):
+    """
+    Retorna os quadros de uma guilda específica com as quests do herói logado.
+    """
+    # Busca todas as quests do herói logado que pertencem à guilda especificada
+    my_quests = db.query(Quest).filter(
+        Quest.heroes.contains(current_hero),
+        Quest.guild_board_id == guild_id
+    ).all()
+    
+    # Busca a guilda
+    guild = db.query(GuildBoard).filter(GuildBoard.id == guild_id).first()
+    if not guild:
+        raise HTTPException(status_code=404, detail="Guilda não encontrada")
+    
+    # Organiza as quests por status para o formato do Kanban
+    kanban_data = {
+        "quest-board": {
+            "id": "quest-board",
+            "title": "Quadro de Missões",
+            "status": "QUEST_BOARD",
+            "quests": []
+        },
+        "in-progress": {
+            "id": "in-progress",
+            "title": "Em Andamento",
+            "status": "IN_PROGRESS",
+            "quests": []
+        },
+        "completed": {
+            "id": "completed",
+            "title": "Concluídas",
+            "status": "COMPLETED",
+            "quests": []
+        },
+        "guild": {
+            "id": guild.id,
+            "name": guild.name
+        }
+    }
+    
+    # Distribui as quests nas colunas corretas
+    for quest in my_quests:
+        quest_data = {
+            "id": str(quest.id),
+            "title": quest.title,
+            "description": quest.description,
+            "report": quest.log.report if quest.log else None,
+            "status": quest.status.value,
+            "difficulty": quest.difficulty,
+            "xp_reward": quest.xp_reward,
+            "coin_reward": quest.coin_reward,
             "guild_board_id": quest.guild_board_id
         }
         
@@ -122,6 +221,8 @@ def get_quest(
     return quest
 
 
+from app.utils.gamification import calculate_level
+
 @router.put("/{quest_id}", response_model=QuestSchema)
 def update_quest(
     *,
@@ -142,13 +243,42 @@ def update_quest(
         raise HTTPException(status_code=403, detail="Você não tem permissão para editar esta missão")
     
     update_data = quest_in.model_dump(exclude_unset=True)
-    
+
+    # Normaliza status recebido (suporta valor traduzido, nome ou enum)
+    def _normalize_status(s):
+        if s is None:
+            return None
+        if isinstance(s, QuestStatus):
+            return s
+        # Tenta converter pelo valor (ex: "Missões Concluídas")
+        try:
+            return QuestStatus(s)
+        except Exception:
+            pass
+        # Tenta acessar pelo nome (ex: "COMPLETED")
+        try:
+            return QuestStatus[s]
+        except Exception:
+            return None
+
+    new_status = _normalize_status(update_data.get("status"))
+
     # Regra de Negócio: Se mover para "Concluída", verificar se existe relatório
-    if update_data.get("status") == QuestStatus.COMPLETED and not quest.log:
-        raise HTTPException(
-            status_code=400,
-            detail="Não é possível concluir a missão sem um relatório. Adicione o relatório primeiro."
-        )
+    if new_status == QuestStatus.COMPLETED:
+        if not quest.log:
+            raise HTTPException(
+                status_code=400,
+                detail="Não é possível concluir a missão sem um relatório. Adicione o relatório primeiro."
+            )
+
+        # GAMIFICATION: Se a missão foi concluída agora (e não estava antes), dar recompensas
+        if quest.status != QuestStatus.COMPLETED:
+            for hero in quest.heroes:
+                # Garantir que os campos existem
+                hero.xp = (hero.xp or 0) + (quest.xp_reward or 0)
+                hero.coins = (hero.coins or 0) + (quest.coin_reward or 0)
+                hero.level = calculate_level(hero.xp)
+                db.add(hero)
 
     for field, value in update_data.items():
         setattr(quest, field, value)

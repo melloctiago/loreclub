@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.api import deps
 from app.models import GuildBoard, Hero
-from app.schemas.guild_board import GuildBoard as GuildBoardSchema, GuildBoardCreate
+from app.schemas.guild_board import GuildBoard as GuildBoardSchema, GuildBoardCreate, GuildBoardSimple
 
 router = APIRouter()
 
@@ -25,17 +25,16 @@ def create_guild_board(
     db.refresh(db_board)
     return db_board
 
-@router.get("/", response_model=List[GuildBoardSchema])
+@router.get("/", response_model=List[GuildBoardSimple])
 def get_all_guild_boards(
     db: Session = Depends(deps.get_db),
     current_hero: Hero = Depends(deps.get_current_active_hero)
 ):
     """
-    Lista todos os Quadros e suas respectivas Missões (Cards).
-    Este é o endpoint principal para o frontend carregar o Kanban.
+    Lista todos os Quadros (sem as missões).
+    Retorna apenas id e name para uso em dropdowns.
     """
-    # A consulta já carrega os quadros e, graças ao relationship,
-    # o Pydantic cuidará de serializar as missões.
+    # A consulta já carrega os quadros
     boards = db.query(GuildBoard).all()
     
     return boards

@@ -24,6 +24,13 @@ class Hero(HeroBase):
 
     id: int
     is_active: bool
+    
+    # Gamification
+    level: int
+    xp: int
+    coins: int
+    title: Optional[str] = None
+    
     quests: List["QuestBase"] = [] 
 
 # Schemas para Autenticação (Token JWT)

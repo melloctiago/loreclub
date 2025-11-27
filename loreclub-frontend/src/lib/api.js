@@ -188,4 +188,56 @@ export const apiAssignHeroToQuest = async (questId, heroId) => {
     }
 };
 
+// FUNÇÕES DE GUILD BOARDS
+
+// Cria uma nova guilda (guild board)
+export const apiCreateGuildBoard = async (guildName) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/guild-boards/`, {
+            method: 'POST',
+            body: JSON.stringify({ name: guildName }),
+        });
+        return data;
+    } catch (error) {
+        console.error('Erro ao criar guilda:', error);
+        throw error;
+    }
+};
+
+// Busca todas as guilds
+export const apiGetGuildBoards = async () => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/guild-boards/`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar guilds:', error);
+        throw error;
+    }
+};
+
+// Busca os boards de uma guilda específica
+export const apiGetBoardsByGuild = async (guildId) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/quests/boards-by-guild/${guildId}`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar boards da guilda:', error);
+        throw error;
+    }
+};
+
+// Adiciona/atualiza o relatório da quest
+export const apiAddQuestReport = async (questId, reportData) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/quests/${questId}/report`, {
+            method: 'POST',
+            body: JSON.stringify(reportData),
+        });
+        return data;
+    } catch (error) {
+        console.error('Erro ao adicionar relatório da quest:', error);
+        throw error;
+    }
+};
+
 
