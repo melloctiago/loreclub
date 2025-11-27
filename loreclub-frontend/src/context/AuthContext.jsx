@@ -61,8 +61,20 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const refreshUser = async () => {
+        try {
+            const userData = await apiGetCurrentHero();
+            setUser(userData);
+            localStorage.setItem('loreclub_user', JSON.stringify(userData));
+            return userData;
+        } catch (err) {
+            console.error('Erro ao atualizar usuário atual:', err);
+            return null;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, register, logout, loading, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );

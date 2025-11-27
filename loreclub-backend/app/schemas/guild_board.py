@@ -14,6 +14,16 @@ class GuildBoardCreate(GuildBoardBase):
     """
     pass
 
+class GuildBoardSimple(GuildBoardBase):
+    """
+    Schema simples para leitura do Quadro (apenas id e name).
+    Usado para listas de guilds.
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    owner_id: int | None = None
+
 class GuildBoard(GuildBoardBase):
     """
     Schema para leitura do Quadro (retornado pela API).
@@ -21,6 +31,8 @@ class GuildBoard(GuildBoardBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+    owner_id: int | None = None
 
     quests: List["Quest"] = []
 

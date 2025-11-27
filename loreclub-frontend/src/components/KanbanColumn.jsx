@@ -8,12 +8,25 @@ const KanbanColumn = ({ column, quests, onAddQuest }) => {
     const [showForm, setShowForm] = useState(false);
     const [newQuestTitle, setNewQuestTitle] = useState("");
     const [newQuestDesc, setNewQuestDesc] = useState("");
+    const [difficulty, setDifficulty] = useState("Easy");
+
+    // Recompensas baseadas na dificuldade
+    const rewards = {
+        'Easy': { xp: 10, coins: 5 },
+        'Medium': { xp: 20, coins: 10 },
+        'Hard': { xp: 50, coins: 25 },
+        'Epic': { xp: 100, coins: 50 }
+    };
 
     const handleAddNewQuest = () => {
         if (newQuestTitle.trim() === "") return;
-        onAddQuest(column.id, newQuestTitle, newQuestDesc);
+
+        // Passa os dados extras para o pai
+        onAddQuest(column.id, newQuestTitle, newQuestDesc, difficulty, rewards[difficulty].xp, rewards[difficulty].coins);
+
         setNewQuestTitle("");
         setNewQuestDesc("");
+        setDifficulty("Easy");
         setShowForm(false);
     };
 
@@ -63,6 +76,26 @@ const KanbanColumn = ({ column, quests, onAddQuest }) => {
                             rows="3"
                             className="block w-full rounded-lg border-0 py-3 px-4 bg-gray-700 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lore-purple-md"
                         />
+
+                        {/* Seletor de Dificuldade */}
+                        <div className="flex items-center justify-between">
+                            <select
+                                value={difficulty}
+                                onChange={(e) => setDifficulty(e.target.value)}
+                                className="block rounded-lg border-0 py-2 px-3 bg-gray-700 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 focus:ring-2 focus:ring-inset focus:ring-lore-purple-md sm:text-sm"
+                            >
+                                <option value="Easy">Fácil</option>
+                                <option value="Medium">Média</option>
+                                <option value="Hard">Difícil</option>
+                                <option value="Epic">Épica</option>
+                            </select>
+
+                            <div className="text-xs text-gray-400 flex gap-2">
+                                <span className="text-lore-purple-md font-bold">+{rewards[difficulty].xp} XP</span>
+                                <span className="text-yellow-400 font-bold">+{rewards[difficulty].coins} 🪙</span>
+                            </div>
+                        </div>
+
                         <div className="flex gap-2">
                             <Button type="button" onClick={handleAddNewQuest} className="flex-1">
                                 <Plus className="h-4 w-4 mr-1" /> Adicionar

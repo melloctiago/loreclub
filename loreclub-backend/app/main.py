@@ -1,24 +1,13 @@
-# ====================================================================
-# PONTO CHAVE DA CORREÇÃO FINAL:
-# 1. Importamos TODAS as classes de schema necessárias (Hero, HeroBase, 
-#    Quest, QuestBase, etc.) para o escopo global deste arquivo (main.py).
-# ====================================================================
+
 from app.schemas.hero import Hero, HeroBase
 from app.schemas.quest import Quest, QuestBase
 from app.schemas.guild_board import GuildBoard
-# (Não precisamos importar QuestLog ou Token, pois eles não são 
-# referenciados por strings em outros modelos)
 
-# ====================================================================
-# 2. AGORA que Hero, QuestBase, etc., estão todos no mesmo "ambiente",
-#    as chamadas model_rebuild() funcionarão, pois o Pydantic
-#    encontrará as classes que ele procura.
-# ====================================================================
+# Ensure Pydantic models are registered before app startup
 Hero.model_rebuild()
 Quest.model_rebuild()
 GuildBoard.model_rebuild()
 
-# 3. Agora podemos importar o FastAPI e o resto do aplicativo.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -34,7 +23,12 @@ app = FastAPI(
 # Configuração do CORS para permitir o frontend React
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # URL do frontend
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

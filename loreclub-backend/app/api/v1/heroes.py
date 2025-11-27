@@ -53,3 +53,14 @@ def read_hero_me(
     Retorna os dados do Herói atualmente logado.
     """
     return current_hero
+
+@router.get("/leaderboard", response_model=list[HeroSchema])
+def get_leaderboard(
+    db: Session = Depends(deps.get_db),
+    limit: int = 10
+):
+    """
+    Retorna o ranking dos heróis com mais XP.
+    """
+    heroes = db.query(Hero).order_by(Hero.xp.desc()).limit(limit).all()
+    return heroes

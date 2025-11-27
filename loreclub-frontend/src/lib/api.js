@@ -188,4 +188,125 @@ export const apiAssignHeroToQuest = async (questId, heroId) => {
     }
 };
 
+// FUNÇÕES DE GUILD BOARDS
+
+// Cria uma nova guilda (guild board)
+export const apiCreateGuildBoard = async (guildName) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/guild-boards/`, {
+            method: 'POST',
+            body: JSON.stringify({ name: guildName }),
+        });
+        return data;
+    } catch (error) {
+        console.error('Erro ao criar guilda:', error);
+        throw error;
+    }
+};
+
+// Busca todas as guilds
+export const apiGetGuildBoards = async () => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/guild-boards/`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar guilds:', error);
+        throw error;
+    }
+};
+
+// Busca os boards de uma guilda específica
+export const apiGetBoardsByGuild = async (guildId) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/quests/boards-by-guild/${guildId}`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar boards da guilda:', error);
+        throw error;
+    }
+};
+
+// Adiciona/atualiza o relatório da quest
+export const apiAddQuestReport = async (questId, reportData) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/quests/${questId}/report`, {
+            method: 'POST',
+            body: JSON.stringify(reportData),
+        });
+        return data;
+    } catch (error) {
+        console.error('Erro ao adicionar relatório da quest:', error);
+        throw error;
+    }
+};
+
+// FUNÇÕES DE CONQUISTAS (ACHIEVEMENTS)
+
+export const apiGetAchievements = async () => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/achievements/`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar conquistas:', error);
+        throw error;
+    }
+};
+
+export const apiGetAchievementsForUser = async () => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/achievements/me`);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar conquistas do usuário:', error);
+        throw error;
+    }
+};
+
+export const apiUnlockAchievement = async (achievementId) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/achievements/${achievementId}/unlock`, {
+            method: 'POST'
+        });
+        return data;
+    } catch (error) {
+        console.error('Erro ao desbloquear conquista:', error);
+        throw error;
+    }
+};
+
+export const apiRemoveUnlock = async (achievementId) => {
+    try {
+        await fetchWithAuth(`${API_BASE_URL}/achievements/${achievementId}/unlock`, { method: 'DELETE' });
+        return true;
+    } catch (error) {
+        console.error('Erro ao remover desbloqueio:', error);
+        throw error;
+    }
+};
+
+export const apiCreateAchievement = async (achievementData) => {
+    try {
+        const data = await fetchWithAuth(`${API_BASE_URL}/achievements/`, {
+            method: 'POST',
+            body: JSON.stringify(achievementData),
+        });
+        return data;
+    } catch (error) {
+        console.error('Erro ao criar conquista:', error);
+        throw error;
+    }
+};
+
+export const apiDeleteAchievement = async (achievementId) => {
+    try {
+        await fetchWithAuth(`${API_BASE_URL}/achievements/${achievementId}`, {
+            method: 'DELETE'
+        });
+        return true;
+    } catch (error) {
+        console.error('Erro ao deletar conquista:', error);
+        throw error;
+    }
+};
+
 
