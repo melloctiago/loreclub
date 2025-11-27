@@ -6,6 +6,8 @@ import KanbanColumn from './KanbanColumn';
 import Button from './Button';
 import CreateGuildModal from './CreateGuildModal';
 import ReportModal from './ReportModal';
+import UserMenu from './UserMenu';
+import AchievementsModal from './AchievementsModal';
 
 // Mapa de tradução dos status (apenas para exibição quando necessário)
 const statusMap = {
@@ -25,6 +27,7 @@ const Board = () => {
     const [availableGuilds, setAvailableGuilds] = useState([]);
     const [showReportModal, setShowReportModal] = useState(false);
     const [pendingCompletion, setPendingCompletion] = useState(null); // { questId }
+    const [showAchievementsModal, setShowAchievementsModal] = useState(false);
 
     // Armazena o estado das colunas antes de um drag-and-drop
     // Útil para reverter em caso de falha na API
@@ -351,6 +354,13 @@ const Board = () => {
             } catch (err) {
                 console.error('Erro ao recarregar guilds:', err);
             }
+
+            // Atualiza o perfil do usuário para refletir moedas deduzidas (se foi guilda paga)
+            try {
+                if (refreshUser) await refreshUser();
+            } catch (err) {
+                console.error('Erro ao atualizar usuário após criar guilda:', err);
+            }
             
             alert('Guilda criada com sucesso!');
         } catch (err) {
@@ -439,7 +449,14 @@ const Board = () => {
                         ➕ Criar Guilda
                     </Button>
 
-                    <span className="text-gray-300">Bem-vindo, {user.username}!</span>
+                    <UserMenu
+                        username={user.username}
+                        onProfileClick={() => {
+                            // TODO: Implementar tela de perfil
+                            console.log('Perfil clicado');
+                        }}
+                        onAchievementsClick={() => setShowAchievementsModal(true)}
+                    />
                     <Button onClick={logout} variant="secondary" className="!w-auto !py-2 !px-4 !bg-gray-700">
                         Sair da Guilda
                     </Button>
@@ -477,6 +494,11 @@ const Board = () => {
                 isOpen={showReportModal}
                 onClose={() => { setShowReportModal(false); setPendingCompletion(null); }}
                 onSubmit={handleSubmitReport}
+            />
+            {/* Modal de Conquistas */}
+            <AchievementsModal
+                isOpen={showAchievementsModal}
+                onClose={() => setShowAchievementsModal(false)}
             />
         </div>
     );

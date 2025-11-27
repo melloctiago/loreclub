@@ -22,6 +22,7 @@ class GuildBoardSimple(GuildBoardBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    owner_id: int | None = None
 
 class GuildBoard(GuildBoardBase):
     """
@@ -30,6 +31,8 @@ class GuildBoard(GuildBoardBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+    owner_id: int | None = None
 
     quests: List["Quest"] = []
 
