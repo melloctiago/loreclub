@@ -23,7 +23,6 @@ class Hero(HeroBase):
     id: int
     is_active: bool
     
-    # Gamification
     level: int
     xp: int
     coins: int

@@ -271,7 +271,6 @@ def update_quest(
                 detail="Não é possível concluir a missão sem um relatório. Adicione o relatório primeiro."
             )
 
-        # GAMIFICATION: Se a missão foi concluída agora (e não estava antes), dar recompensas
         if quest.status != QuestStatus.COMPLETED:
             for hero in quest.heroes:
                 # Garantir que os campos existem

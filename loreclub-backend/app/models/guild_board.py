@@ -12,7 +12,6 @@ class GuildBoard(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
-    # Optional owner (creator) of the guild board. Nullable to keep backwards compatibility.
     owner_id = Column(Integer, ForeignKey("hero.id"), nullable=True)
 
     # Relacionamento One-to-Many com Missões

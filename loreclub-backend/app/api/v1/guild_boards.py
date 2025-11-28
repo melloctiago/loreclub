@@ -19,23 +19,20 @@ def create_guild_board(
     """
     Cria um novo Quadro (Board) para organizar as missões.
     """
-    # Count how many guilds this hero already created (owner_id)
     owned_count = db.query(GuildBoard).filter(GuildBoard.owner_id == current_hero.id).count()
 
-    # First two guilds are free
     if owned_count >= 2:
         cost = 100
         if (current_hero.coins or 0) < cost:
             raise HTTPException(status_code=400, detail="Saldo insuficiente para criar nova guilda. São necessárias 100 moedinhas.")
-        # Deduct coins
         current_hero.coins = (current_hero.coins or 0) - cost
 
     db_board = GuildBoard(name=board_in.name, owner_id=current_hero.id)
     db.add(db_board)
-    db.add(current_hero)  # Ensure hero changes are persisted
+    db.add(current_hero) 
     db.commit()
     db.refresh(db_board)
-    db.refresh(current_hero)  # Refresh hero to get updated coins
+    db.refresh(current_hero)
     return db_board
 
 @router.get("/", response_model=List[GuildBoardSimple])

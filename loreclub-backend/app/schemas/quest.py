@@ -13,7 +13,6 @@ class QuestBase(BaseModel):
     description: Optional[str] = None
     status: QuestStatus = QuestStatus.QUEST_BOARD
     
-    # Gamification Rewards
     xp_reward: int = 10
     coin_reward: int = 5
     difficulty: str = "Easy"

@@ -9,7 +9,7 @@ import ReportModal from './ReportModal';
 import UserMenu from './UserMenu';
 import AchievementsModal from './AchievementsModal';
 
-// Mapa de tradução dos status (apenas para exibição quando necessário)
+// Mapa de tradução dos status (só pra exibir certinho)
 const statusMap = {
     'QUEST_BOARD': 'Quadro de Missões',
     'IN_PROGRESS': 'Em Andamento',
@@ -30,7 +30,6 @@ const Board = () => {
     const [showAchievementsModal, setShowAchievementsModal] = useState(false);
 
     // Armazena o estado das colunas antes de um drag-and-drop
-    // Útil para reverter em caso de falha na API
     const [originalColumns, setOriginalColumns] = useState(null);
 
     // Carrega os dados do Kanban
@@ -113,18 +112,17 @@ const Board = () => {
         if (!newQuestTitle || !newQuestTitle.trim()) return;
 
         try {
-                // Usa a chave de status da coluna (ex: 'QUEST_BOARD')
+                // Usa a chave de status da coluna 
                 const statusKey = columns[columnId].status;
                 const statusValue = statusMap[statusKey]; // Converte para o valor traduzido
 
-            // Payload para a API (inclui campos adicionais)
                 const newQuestData = {
                 title: newQuestTitle,
                 description: newQuestDesc,
                 difficulty,
                 xp_reward: xpReward,
                 coin_reward: coinReward,
-                    status: statusValue, // Enviamos o valor traduzido (como antes)
+                    status: statusValue,
                 guild_board_id: currentGuild?.id || 1 // Usa a guilda atual ou padrão
             };
 
@@ -133,7 +131,6 @@ const Board = () => {
             // Atualiza o estado de forma imutável
             setColumns(prevColumns => {
                 const column = prevColumns[columnId];
-                // Se column não existir (por segurança), retorna prevColumns
                 if (!column) return prevColumns;
                 const newQuests = [...column.quests, createdQuest]; // Adiciona a nova quest
 
@@ -199,10 +196,6 @@ const Board = () => {
                 [newColumn.id]: newColumn
             });
 
-            // Revertemos para o estado original em caso de erro no backend,
-            // mas para reordenação na mesma coluna, o backend geralmente não é chamado
-            // a não ser que você queira persistir a ordem. Se for o caso, adicione a chamada de API aqui.
-            // Se for apenas local, podemos atualizar o originalColumns aqui.
             setOriginalColumns(prev => ({
                 ...prev,
                 [newColumn.id]: newColumn
@@ -210,8 +203,6 @@ const Board = () => {
 
     } else {
             // --- Mover entre colunas ---
-
-            // Captura o estado atual das colunas para possível reversão
             const currentStartColumn = startColumn;
             const currentEndColumn = endColumn;
 
@@ -229,7 +220,6 @@ const Board = () => {
                 quests: endQuests
             };
 
-            // 1. Atualiza o estado local
             setColumns(prev => ({
                 ...prev,
                 [newStartColumn.id]: newStartColumn,

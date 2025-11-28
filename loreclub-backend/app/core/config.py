@@ -20,5 +20,4 @@ class Settings(BaseSettings):
         # Define o arquivo .env a ser lido
         env_file = ".env"
 
-# Instância única das configurações
 settings = Settings()

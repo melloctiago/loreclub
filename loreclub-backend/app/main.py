@@ -3,7 +3,6 @@ from app.schemas.hero import Hero, HeroBase
 from app.schemas.quest import Quest, QuestBase
 from app.schemas.guild_board import GuildBoard
 
-# Ensure Pydantic models are registered before app startup
 Hero.model_rebuild()
 Quest.model_rebuild()
 GuildBoard.model_rebuild()
@@ -20,7 +19,6 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# Configuração do CORS para permitir o frontend React
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
