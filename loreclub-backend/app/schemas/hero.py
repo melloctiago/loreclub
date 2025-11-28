@@ -1,8 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr, ConfigDict
 
-# REMOVEMOS a importação de .quest que causava o círculo
-
 class HeroBase(BaseModel):
     """
     Schema base para o Herói (Usuário).

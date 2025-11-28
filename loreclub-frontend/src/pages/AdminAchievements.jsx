@@ -14,7 +14,7 @@ const OBJECTIVE_TYPES = [
   { value: 'reach_level', label: 'Alcançar nível' },
 ];
 
-
+//TODO: Futuramente quero acrescentar icones personalizados, por hora uso emojis
 const ICON_OPTIONS = [
   '🗡️',
   '🛡️',

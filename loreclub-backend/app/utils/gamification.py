@@ -3,7 +3,7 @@ import math
 def calculate_level(xp: int) -> int:
     """
     Calcula o nível baseado no XP.
-    Fórmula simples: Nível = 1 + sqrt(XP / 100)
+    Fórmula: Nível = 1 + raiz quadrada(XP / 100)
     Exemplo:
     0 XP -> Nível 1
     100 XP -> Nível 2

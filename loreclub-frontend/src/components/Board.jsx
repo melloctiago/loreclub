@@ -60,7 +60,6 @@ const Board = () => {
                     console.log('Guilds disponíveis:', guilds);
                     if (Array.isArray(guilds)) {
                         setAvailableGuilds(guilds);
-                        // If no currentGuild came from /my-boards-with-quests, default to the first available
                         if (!data.guild && guilds.length > 0) {
                             const defaultGuild = guilds[0];
                             setCurrentGuild(defaultGuild);
@@ -89,9 +88,8 @@ const Board = () => {
         };
 
         fetchData();
-    }, []); // Executa apenas na montagem
+    }, []);
 
-    // Handler para mudar de guilda
     const handleChangeGuild = async (guildId) => {
         try {
             setLoading(true);
@@ -111,8 +109,6 @@ const Board = () => {
         }
     };
 
-    // CORREÇÃO/ADIÇÃO: Função para adicionar uma nova quest
-    // Agora aceita descrição, dificuldade e recompensas vindas de KanbanColumn
     const handleAddQuest = async (columnId, newQuestTitle, newQuestDesc = '', difficulty = 'Easy', xpReward = 10, coinReward = 5) => {
         if (!newQuestTitle || !newQuestTitle.trim()) return;
 
@@ -233,7 +229,7 @@ const Board = () => {
                 quests: endQuests
             };
 
-            // 1. Atualiza o estado local (otimista)
+            // 1. Atualiza o estado local
             setColumns(prev => ({
                 ...prev,
                 [newStartColumn.id]: newStartColumn,
@@ -241,22 +237,19 @@ const Board = () => {
             }));
 
 
-            // If destination is the COMPLETED column, we need a report first.
             try {
                 const questId = parseInt(draggableId);
                 const statusKey = endColumn.status;
 
-                // If moving to completed, open modal to add report first
                 if (statusKey === 'COMPLETED') {
-                    // store pending quest id and open modal
+
                     setPendingCompletion({ questId, source, destination });
                     setShowReportModal(true);
-                    // Revert optimistic update by resetting columns to original
+
                     setColumns(originalColumns);
                     return;
                 }
 
-                // For other status changes proceed as before (send translated value)
                 const statusValue = statusMap[statusKey];
 
                 if (!statusValue) {
@@ -269,7 +262,6 @@ const Board = () => {
 
                 console.log(`Missão ${questId} movida para ${statusValue}`);
 
-                // If the backend had success, update originalColumns
                 setOriginalColumns(prev => ({
                     ...prev,
                     [newStartColumn.id]: newStartColumn,
@@ -284,21 +276,17 @@ const Board = () => {
         }
     };
 
-    // Called when user submits the report modal
     const handleSubmitReport = async (reportText) => {
         if (!pendingCompletion) return;
         const { questId } = pendingCompletion;
         setShowReportModal(false);
         setLoading(true);
         try {
-            // 1) Add report
             await apiAddQuestReport(questId, { report: reportText });
 
-            // 2) Update quest status to COMPLETED (send translated value)
             const statusValue = statusMap['COMPLETED'];
             await apiUpdateQuest(questId, { status: statusValue });
 
-            // 3) Refresh boards for current guild or default
             if (currentGuild && currentGuild.id) {
                 const data = await apiGetBoardsByGuild(currentGuild.id);
                 setColumns(data);
