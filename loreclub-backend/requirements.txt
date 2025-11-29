@@ -1,27 +1,9 @@
-Framework principal
-
 fastapi[all]
-
-ORM e Migrações
-
 sqlalchemy
 alembic
-
-Conector MySQL
-
 mysql-connector-python
-
-Configuração e .env
-
 pydantic-settings
-
-Autenticação e Segurança
-
 passlib==1.7.4
 bcrypt==3.2.0
-
 python-jose[cryptography]
-
-(Opcional, mas recomendado para CORS com React)
-
 python-multipart
